@@ -1,6 +1,7 @@
 ﻿using Domain.Entities;
 using Domain.Repositories;
 using Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
@@ -20,14 +21,20 @@ namespace Infrastructure.Repositories
             return task.Id;
         }
 
-        public Task DeleteAsync(Guid id)
+        public async Task DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var toRemove = await context.Tasks.FindAsync(id);
+            if (toRemove != null)
+            {
+                context.Tasks.Remove(toRemove);
+                await context.SaveChangesAsync();
+            }
         }
 
-        public Task<IEnumerable<TaskEntity>> GetAllAsync()
+        public async Task<IEnumerable<TaskEntity>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var tasks = await context.Tasks.ToListAsync();
+            return tasks;
         }
 
         public async Task<TaskEntity> GetByIdAsync(Guid id)
@@ -35,9 +42,20 @@ namespace Infrastructure.Repositories
             return await context.Tasks.FindAsync(id);
         }
 
-        public Task UpdateAsync(TaskEntity task)
+        public async Task UpdateAsync(TaskEntity newTask)
         {
-            throw new NotImplementedException();
+            var modifiedTask = await context.Tasks.FindAsync(newTask.Id);
+            if (modifiedTask != null)
+            {
+                modifiedTask.Title = newTask.Title;
+                modifiedTask.Description = newTask.Description;
+                modifiedTask.Priority = newTask.Priority;
+                modifiedTask.State = newTask.State;
+                modifiedTask.DueDate = newTask.DueDate;
+                modifiedTask.UpdatedAt = DateTime.Now;
+            }
+            context.Tasks.Entry(modifiedTask).State = EntityState.Modified;
+            await context.SaveChangesAsync();
         }
     }
 }
