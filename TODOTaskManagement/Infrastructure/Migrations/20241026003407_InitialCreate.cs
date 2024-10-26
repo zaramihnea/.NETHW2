@@ -13,7 +13,7 @@ namespace Infrastructure.Migrations
         {
             migrationBuilder.AlterDatabase()
                 .Annotation("Npgsql:Enum:task_priority", "low,medium,high")
-                .Annotation("Npgsql:Enum:task_status", "pending,completed")
+                .Annotation("Npgsql:Enum:task_state", "pending,completed")
                 .Annotation("Npgsql:PostgresExtension:uuid-ossp", ",,");
 
             migrationBuilder.CreateTable(
@@ -23,7 +23,7 @@ namespace Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
                     Title = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
-                    Status = table.Column<string>(type: "text", nullable: false, defaultValue: "Pending"),
+                    State = table.Column<string>(type: "text", nullable: false, defaultValue: "Pending"),
                     Priority = table.Column<string>(type: "text", nullable: false, defaultValue: "Low"),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     DueDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),

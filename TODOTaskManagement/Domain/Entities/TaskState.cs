@@ -1,6 +1,6 @@
 ﻿namespace Domain.Entities
 {
-    public enum TaskStatus
+    public enum TaskState
     {
         Pending,
         Completed

@@ -21,7 +21,7 @@ namespace Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "task_priority", new[] { "low", "medium", "high" });
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "task_status", new[] { "pending", "completed" });
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "task_state", new[] { "pending", "completed" });
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "uuid-ossp");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
@@ -49,7 +49,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text")
                         .HasDefaultValue("Low");
 
-                    b.Property<string>("Status")
+                    b.Property<string>("State")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("text")

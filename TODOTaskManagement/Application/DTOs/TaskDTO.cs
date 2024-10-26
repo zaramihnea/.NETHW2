@@ -1,6 +1,8 @@
-﻿namespace Domain.Entities
+﻿using Domain.Entities;
+
+namespace Application.DTOs
 {
-    public class TaskEntity
+    internal class TaskDTO
     {
         public Guid Id { get; set; }
         public string Title { get; set; }

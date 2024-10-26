@@ -13,7 +13,7 @@ namespace Infrastructure.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasPostgresEnum<Domain.Entities.TaskStatus>();
+            modelBuilder.HasPostgresEnum<Domain.Entities.TaskState>();
             modelBuilder.HasPostgresEnum<TaskPriority>();
             modelBuilder.HasPostgresExtension("uuid-ossp");
             modelBuilder.Entity<TaskEntity>(entity =>
@@ -29,7 +29,7 @@ namespace Infrastructure.Persistence
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.DueDate);
                 entity.Property(e => e.updatedAt).IsRequired().ValueGeneratedOnUpdate();
-                entity.Property(e => e.Status).HasConversion<string>().IsRequired().HasDefaultValue(Domain.Entities.TaskStatus.Pending);
+                entity.Property(e => e.State).HasConversion<string>().IsRequired().HasDefaultValue(TaskState.Pending);
                 entity.Property(e => e.Priority).HasConversion<string>().IsRequired().HasDefaultValue(TaskPriority.Low);
             });
         }
