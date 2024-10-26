@@ -24,10 +24,30 @@ namespace TODOTaskManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Guid>> CreateBook(CreateTaskCommand command)
+        public async Task<ActionResult<Guid>> CreateTask(CreateTaskCommand command)
         {
             var id = await mediator.Send(command);
             return CreatedAtAction("GetById", new { Id = id }, id);
+        }
+        [HttpPost("Delete")]
+        public async Task<ActionResult> DeleteById(Guid id)
+        {
+            var query = new DeleteTaskCommand { Id = id };
+            await mediator.Send(query);
+            return NoContent();
+        }
+        [HttpPost("Update")]
+        public async Task<ActionResult> Update(UpdateTaskCommand update)
+        {
+            await mediator.Send(update);
+            return NoContent();
+        }
+        [HttpGet("All")]
+        public async Task<IEnumerable<TaskDTO>> GetAll()
+        {
+            var query = new GetAllTasksQuery();
+            IEnumerable<TaskDTO> enumerable = await mediator.Send(query);
+            return enumerable;
         }
     }
 }
