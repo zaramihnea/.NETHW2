@@ -1,15 +1,9 @@
-﻿using Application.DTOs;
-using Application.UseCases.Commands;
+﻿using Application.UseCases.Commands;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Repositories;
 using FluentValidation;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.UseCases.CommandHandlers
 {
