@@ -26,11 +26,11 @@ namespace Infrastructure.Persistence
                 .ValueGeneratedOnAdd();
                 entity.Property(e => e.Title).IsRequired().HasMaxLength(200);
                 entity.Property(e => e.Description).IsRequired().HasMaxLength(500);
-                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.CreatedAt).IsRequired().ValueGeneratedOnAdd().HasDefaultValueSql("CURRENT_TIMESTAMP");
                 entity.Property(e => e.DueDate);
-                entity.Property(e => e.updatedAt).IsRequired().ValueGeneratedOnUpdate();
-                entity.Property(e => e.State).HasConversion<string>().IsRequired().HasDefaultValue(TaskState.Pending);
-                entity.Property(e => e.Priority).HasConversion<string>().IsRequired().HasDefaultValue(TaskPriority.Low);
+                entity.Property(e => e.UpdatedAt).ValueGeneratedOnUpdate();
+                entity.Property(e => e.State).IsRequired();
+                entity.Property(e => e.Priority).IsRequired();
             });
         }
     }

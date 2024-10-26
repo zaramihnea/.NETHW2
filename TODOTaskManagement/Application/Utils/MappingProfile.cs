@@ -1,4 +1,7 @@
-﻿using AutoMapper;
+﻿using Application.DTOs;
+using Application.UseCases.Commands;
+using AutoMapper;
+using Domain.Entities;
 
 namespace Application.Utils
 {
@@ -6,7 +9,8 @@ namespace Application.Utils
     {
         public MappingProfile()
         {
-
+            CreateMap<TaskEntity, TaskDTO>().ReverseMap();
+            CreateMap<CreateTaskCommand, TaskEntity>().ReverseMap();
         }
     }
 }

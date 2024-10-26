@@ -9,6 +9,6 @@
         public TaskPriority Priority { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? DueDate { get; set; }
-        public DateTime updatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
     }
 }

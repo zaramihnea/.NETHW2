@@ -13,9 +13,11 @@ namespace Infrastructure.Repositories
             this.context = context;
         }
 
-        public Task<Guid> AddAsync(TaskEntity task)
+        public async Task<Guid> AddAsync(TaskEntity task)
         {
-            throw new NotImplementedException();
+            await context.Tasks.AddAsync(task);
+            await context.SaveChangesAsync();
+            return task.Id;
         }
 
         public Task DeleteAsync(Guid id)
@@ -28,9 +30,9 @@ namespace Infrastructure.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<TaskEntity> GetByIdAsync(Guid id)
+        public async Task<TaskEntity> GetByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            return await context.Tasks.FindAsync(id);
         }
 
         public Task UpdateAsync(TaskEntity task)

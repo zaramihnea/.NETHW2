@@ -2,7 +2,7 @@
 {
     public enum TaskState
     {
-        Pending,
-        Completed
+        Pending = 1,
+        Completed = 2
     }
 }
