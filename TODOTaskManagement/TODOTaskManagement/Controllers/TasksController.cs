@@ -29,14 +29,14 @@ namespace TODOTaskManagement.Controllers
             var id = await mediator.Send(command);
             return CreatedAtAction("GetById", new { Id = id }, id);
         }
-        [HttpPost("Delete")]
+        [HttpDelete("Delete")]
         public async Task<ActionResult> DeleteById(Guid id)
         {
             var query = new DeleteTaskCommand { Id = id };
             await mediator.Send(query);
             return NoContent();
         }
-        [HttpPost("Update")]
+        [HttpPut("Update")]
         public async Task<ActionResult> Update(UpdateTaskCommand update)
         {
             await mediator.Send(update);
