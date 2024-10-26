@@ -11,7 +11,7 @@ namespace Application.Utils
         {
             CreateMap<TaskEntity, TaskDTO>().ReverseMap();
             CreateMap<CreateTaskCommand, TaskEntity>().ReverseMap();
-            CreateMap<TaskEntity, UpdateTaskCommand>().ReverseMap();
+            CreateMap<UpdateTaskCommand, TaskEntity>().ReverseMap();
         }
     }
 }

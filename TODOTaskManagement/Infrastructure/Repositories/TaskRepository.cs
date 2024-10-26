@@ -23,7 +23,7 @@ namespace Infrastructure.Repositories
 
         public async Task DeleteAsync(Guid id)
         {
-            var toRemove = await context.Tasks.FindAsync(id);
+            var toRemove = context.Tasks.FirstOrDefault(x => x.Id == id);
             if (toRemove != null)
             {
                 context.Tasks.Remove(toRemove);
@@ -42,19 +42,9 @@ namespace Infrastructure.Repositories
             return await context.Tasks.FindAsync(id);
         }
 
-        public async Task UpdateAsync(TaskEntity newTask)
+        public async Task UpdateAsync(TaskEntity task)
         {
-            var modifiedTask = await context.Tasks.FindAsync(newTask.Id);
-            if (modifiedTask != null)
-            {
-                modifiedTask.Title = newTask.Title;
-                modifiedTask.Description = newTask.Description;
-                modifiedTask.Priority = newTask.Priority;
-                modifiedTask.State = newTask.State;
-                modifiedTask.DueDate = newTask.DueDate;
-                modifiedTask.UpdatedAt = DateTime.Now;
-            }
-            context.Tasks.Entry(modifiedTask).State = EntityState.Modified;
+            context.Entry(task).State = EntityState.Modified;
             await context.SaveChangesAsync();
         }
     }

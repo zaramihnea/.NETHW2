@@ -1,5 +1,4 @@
-﻿using Domain.Entities;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace Application.UseCases.Commands
 {

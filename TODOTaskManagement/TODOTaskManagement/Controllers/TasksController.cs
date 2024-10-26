@@ -48,7 +48,7 @@ namespace TODOTaskManagement.Controllers
             return NoContent();
         }
 
-        [HttpPut("{id:guid}")]
+        [HttpPut("Update")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult> Update(UpdateTaskCommand update)
         {

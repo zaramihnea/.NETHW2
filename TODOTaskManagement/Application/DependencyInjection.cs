@@ -3,6 +3,7 @@ using Application.Utils;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using System.Net.Security;
 using System.Reflection;
 
 namespace Application
@@ -14,6 +15,8 @@ namespace Application
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
             services.AddValidatorsFromAssemblyContaining<CreateTaskCommandValidator>();
+            services.AddValidatorsFromAssemblyContaining<UpdateTaskCommandValidator>();
+            services.AddValidatorsFromAssemblyContaining<DeleteTaskCommandValidator>();
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             return services;
         }

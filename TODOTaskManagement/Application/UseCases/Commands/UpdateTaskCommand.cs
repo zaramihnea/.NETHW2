@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Application.UseCases.Commands
 {
-    public class UpdateTaskCommand : IRequest
+    public class UpdateTaskCommand : IRequest<Unit>
     {
         public Guid Id { get; set; }
         public string Title { get; set; }
