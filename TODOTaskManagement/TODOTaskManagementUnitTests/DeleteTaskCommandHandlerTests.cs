@@ -2,25 +2,25 @@ using Application.UseCases.Commands;
 using Application.UseCases.CommandHandlers;
 using AutoMapper;
 using Domain.Repositories;
-using Moq;
+using NSubstitute;
 
 namespace TODOTaskManagementUnitTests
 {
     public class DeleteTaskCommandHandlerTests
     {
-        private readonly Mock<ITaskRepository> _repositoryMock;
-        private readonly Mock<IMapper> _mapperMock;
+        private readonly ITaskRepository _repositoryMock;
+        private readonly IMapper _mapperMock;
         private readonly DeleteTaskCommandHandler _handler;
 
         public DeleteTaskCommandHandlerTests()
         {
-            _repositoryMock = new Mock<ITaskRepository>();
-            _mapperMock = new Mock<IMapper>();
-            _handler = new DeleteTaskCommandHandler(_repositoryMock.Object, _mapperMock.Object);
+            _repositoryMock = Substitute.For<ITaskRepository>();
+            _mapperMock = Substitute.For<IMapper>();
+            _handler = new DeleteTaskCommandHandler(_repositoryMock, _mapperMock);
         }
 
         [Fact]
-        public async Task Handle_ShouldDeleteTask()
+        public async Task GivenValidCommand_WhenHandleIsCalled_ThenTaskShouldBeDeleted()
         {
             // Arrange
             var taskId = Guid.NewGuid();
@@ -30,7 +30,24 @@ namespace TODOTaskManagementUnitTests
             await _handler.Handle(command, CancellationToken.None);
 
             // Assert
-            _repositoryMock.Verify(r => r.DeleteAsync(taskId), Times.Once);
+            await _repositoryMock.Received(1).DeleteAsync(taskId);
+        }
+
+        [Fact]
+        public async Task GivenNonExistentTask_WhenHandleIsCalled_ThenShouldNotThrowException()
+        {
+            // Arrange
+            var taskId = Guid.NewGuid();
+            var command = new DeleteTaskCommand { Id = taskId };
+
+            _repositoryMock.DeleteAsync(taskId).Returns(Task.CompletedTask);
+
+            // Act
+            var exception = await Record.ExceptionAsync(() => _handler.Handle(command, CancellationToken.None));
+
+            // Assert
+            Assert.Null(exception);
+            await _repositoryMock.Received(1).DeleteAsync(taskId);
         }
     }
 }

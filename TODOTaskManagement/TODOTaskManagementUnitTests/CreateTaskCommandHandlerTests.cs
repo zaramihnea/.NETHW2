@@ -4,25 +4,29 @@ using Application.UseCases.CommandHandlers;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Repositories;
-using Moq;
+using NSubstitute;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace TODOTaskManagementUnitTests
 {
     public class CreateTaskCommandHandlerTests
     {
-        private readonly Mock<ITaskRepository> _repositoryMock;
-        private readonly Mock<IMapper> _mapperMock;
+        private readonly ITaskRepository _repositoryMock;
+        private readonly IMapper _mapperMock;
         private readonly CreateTaskCommandHandler _handler;
 
         public CreateTaskCommandHandlerTests()
         {
-            _repositoryMock = new Mock<ITaskRepository>();
-            _mapperMock = new Mock<IMapper>();
-            _handler = new CreateTaskCommandHandler(_repositoryMock.Object, _mapperMock.Object);
+            _repositoryMock = Substitute.For<ITaskRepository>();
+            _mapperMock = Substitute.For<IMapper>();
+            _handler = new CreateTaskCommandHandler(_repositoryMock, _mapperMock);
         }
 
         [Fact]
-        public async Task Handle_ShouldCreateTask_AndReturnId()
+        public async Task GivenValidCommand_WhenHandleIsCalled_ThenTaskShouldBeCreatedAndReturnId()
         {
             // Arrange
             var command = new CreateTaskCommand
@@ -42,15 +46,33 @@ namespace TODOTaskManagementUnitTests
                 Priority = command.Priority
             };
 
-            _mapperMock.Setup(m => m.Map<TaskEntity>(command)).Returns(taskEntity);
-            _repositoryMock.Setup(r => r.AddAsync(taskEntity)).ReturnsAsync(taskEntity.Id);
+            _mapperMock.Map<TaskEntity>(command).Returns(taskEntity);
+            _repositoryMock.AddAsync(taskEntity).Returns(Task.FromResult(taskEntity.Id));
 
             // Act
             var result = await _handler.Handle(command, CancellationToken.None);
 
             // Assert
             Assert.Equal(taskEntity.Id, result);
-            _repositoryMock.Verify(r => r.AddAsync(taskEntity), Times.Once);
+            await _repositoryMock.Received(1).AddAsync(taskEntity);
+        }
+
+        [Fact]
+        public async Task GivenInvalidMapping_WhenHandleIsCalled_ThenShouldThrowException()
+        {
+            // Arrange
+            var command = new CreateTaskCommand
+            {
+                Title = "Test Task",
+                Description = "Test Description",
+                State = TaskState.Pending,
+                Priority = TaskPriority.Medium
+            };
+
+            _mapperMock.Map<TaskEntity>(command).Returns((TaskEntity)null);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentNullException>(() => _handler.Handle(command, CancellationToken.None));
         }
     }
 }

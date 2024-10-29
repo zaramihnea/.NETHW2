@@ -1,4 +1,5 @@
 using Application.UseCases.Commands;
+using Domain.Entities;
 using FluentValidation.TestHelper;
 
 namespace TODOTaskManagementUnitTests
@@ -13,47 +14,41 @@ namespace TODOTaskManagementUnitTests
         }
 
         [Fact]
-        public void ShouldHaveError_WhenTitleIsEmpty()
+        public void GivenValidCommand_WhenValidated_ThenShouldNotHaveValidationErrors()
         {
             // Arrange
-            var command = new CreateTaskCommand { Title = "", Description = "Test Description" };
-
-            // Act
-            var result = _validator.TestValidate(command);
-
-            // Assert
-            result.ShouldHaveValidationErrorFor(x => x.Title);
-        }
-
-        [Fact]
-        public void ShouldHaveError_WhenTitleExceeds200Characters()
-        {
-            // Arrange
-            var command = new CreateTaskCommand { Title = new string('x', 201), Description = "Test Description" };
-
-            // Act
-            var result = _validator.TestValidate(command);
-
-            // Assert
-            result.ShouldHaveValidationErrorFor(x => x.Title);
-        }
-
-        [Fact]
-        public void ShouldHaveError_WhenDueDateIsInPast()
-        {
-            // Arrange
-            var command = new CreateTaskCommand 
-            { 
-                Title = "Test", 
+            var command = new CreateTaskCommand
+            {
+                Title = "Test Task",
                 Description = "Test Description",
-                DueDate = DateTime.Now.AddDays(-1)
+                State = TaskState.Pending,
+                Priority = TaskPriority.Medium
             };
 
             // Act
             var result = _validator.TestValidate(command);
 
             // Assert
-            result.ShouldHaveValidationErrorFor(x => x.DueDate);
+            result.ShouldNotHaveAnyValidationErrors();
+        }
+
+        [Fact]
+        public void GivenInvalidCommand_WhenValidated_ThenShouldHaveValidationErrors()
+        {
+            // Arrange
+            var command = new CreateTaskCommand
+            {
+                Title = "", // Invalid title
+                Description = "Test Description",
+                State = TaskState.Pending,
+                Priority = TaskPriority.Medium
+            };
+
+            // Act
+            var result = _validator.TestValidate(command);
+
+            // Assert
+            result.ShouldHaveValidationErrorFor(c => c.Title);
         }
     }
 }

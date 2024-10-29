@@ -4,21 +4,25 @@ using Application.UseCases.QueryHandlers;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Repositories;
-using Moq;
+using NSubstitute;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace TODOTaskManagementUnitTests
 {
     public class GetTaskByIdQueryHandlerTests
     {
-        private readonly Mock<ITaskRepository> _repositoryMock;
-        private readonly Mock<IMapper> _mapperMock;
+        private readonly ITaskRepository _repositoryMock;
+        private readonly IMapper _mapperMock;
         private readonly GetTaskByIdQueryHandler _handler;
 
         public GetTaskByIdQueryHandlerTests()
         {
-            _repositoryMock = new Mock<ITaskRepository>();
-            _mapperMock = new Mock<IMapper>();
-            _handler = new GetTaskByIdQueryHandler(_repositoryMock.Object, _mapperMock.Object);
+            _repositoryMock = Substitute.For<ITaskRepository>();
+            _mapperMock = Substitute.For<IMapper>();
+            _handler = new GetTaskByIdQueryHandler(_repositoryMock, _mapperMock);
         }
 
         [Fact]
@@ -27,23 +31,23 @@ namespace TODOTaskManagementUnitTests
             // Arrange
             var taskId = Guid.NewGuid();
             var query = new GetTaskByIdQuery { Id = taskId };
-            
-            var taskEntity = new TaskEntity 
-            { 
-                Id = taskId,
-                Title = "Test Task",
-                Description = "Test Description"
-            };
-            
-            var taskDto = new TaskDTO 
-            { 
+
+            var taskEntity = new TaskEntity
+            {
                 Id = taskId,
                 Title = "Test Task",
                 Description = "Test Description"
             };
 
-            _repositoryMock.Setup(r => r.GetByIdAsync(taskId)).ReturnsAsync(taskEntity);
-            _mapperMock.Setup(m => m.Map<TaskDTO>(taskEntity)).Returns(taskDto);
+            var taskDto = new TaskDto
+            {
+                Id = taskId,
+                Title = "Test Task",
+                Description = "Test Description"
+            };
+
+            _repositoryMock.GetByIdAsync(taskId).Returns(Task.FromResult(taskEntity));
+            _mapperMock.Map<TaskDto>(taskEntity).Returns(taskDto);
 
             // Act
             var result = await _handler.Handle(query, CancellationToken.None);
@@ -51,7 +55,7 @@ namespace TODOTaskManagementUnitTests
             // Assert
             Assert.NotNull(result);
             Assert.Equal(taskId, result.Id);
-            _repositoryMock.Verify(r => r.GetByIdAsync(taskId), Times.Once);
+            await _repositoryMock.Received(1).GetByIdAsync(taskId);
         }
     }
 }
